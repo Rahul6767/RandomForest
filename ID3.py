@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Feb 18 12:11:08 2024
-
-@author: shahriar
-"""
-
 import numpy as np 
 import pandas as pd
 import matplotlib.pyplot as plt 
@@ -473,7 +465,7 @@ class ID3:
         """
         return np.array([self.predictTree(x[1], tree) for x in X.iterrows()])
     
-    def predictTree(self, X, tree, root = None):
+    def predictTree(self, X, tree, position=None, root = None):
         
         """
         Parameters
@@ -487,19 +479,31 @@ class ID3:
             predicted value of decision tree formed by ID3 - single row
         """
         if root == None:
-            subroot = list(tree[::-1][0])
-            branchValue = tree[0] + '->' + X[tree[0]]
+            subroot = list(tree.tree[::-1][0])
+            branchValue = subroot[0] + '->' + X[subroot[0]]
+            print('branchValue:',branchValue)
         else:
-            subroot = tree[0]
-            branchValue = root + '<-' + subroot + '->' + X[subroot]
+            print('tree.tree:',tree.tree[::-1][position])
+            subroot = tree.tree[::-1][position]
+            branchValue = root + '<-' + tree.tree[::-1][position][0] + '->' + X[tree.tree[::-1][position][0]]
         
         if branchValue in subroot:
-            if subroot[0] + '-' + X[subroot[0]] in tree.leaf_nodes:
-                return tree.leaf_nodes[branchValue][0]
+            a = subroot[0] + '-' + X[subroot[0]]
+            print('a:',a)
+            for d in tree.leaf_nodes:
+                if a in d.keys():
+                    print('a:',d.get(a)[0])
+                    return d.get(a)[0]
             
             else:
-                position = len(subroot) - subroot[::-1].index(branchValue) - 1
-                self.predictTree(X,tree[position], root= root[0] + '-' + X[root[0]])
+                print('len(subroot):',len(subroot))
+                print('subroot[::-1].index(branchValue):', subroot.index(branchValue))
+                position = len(subroot) - subroot.index(branchValue)
+                print('position:',position)
+                print('tree:',tree.tree[::-1][position])
+                self.predictTree(X, tree, position=position, root= subroot[0] + '-' + X[subroot[0]])
+                
+        
         
              
 class RandomForest:
@@ -600,5 +604,5 @@ y = df.iloc[:, -1]
 
 tree = ID3()
 tree.run(X, y, attributes)
-predictions = tree.predict(X, tree.tree)
+predictions = tree.predict(X, tree)
 print('predictions:',predictions)
