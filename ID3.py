@@ -486,8 +486,14 @@ class ID3:
         Returns 
             predicted value of decision tree formed by ID3 - single row
         """
+        
+        print('tree:',tree)
+        print('tree:',tree.leaf_nodes)
+        print('tree.leaf_nodes[0].get(None)',tree.leaf_nodes[0].get(None))
+        print('root',root)
         if tree.tree:
             if root == None:
+                print('a: ',1)
                 subroot = list(tree.tree[::-1][0])
                 branchValue = subroot[0] + '->' + X[subroot[0]]
                 print('branchValue:',branchValue)
@@ -502,17 +508,20 @@ class ID3:
                 for d in tree.leaf_nodes:
                     if a in d.keys():
                         print('a:',d.get(a)[0])
+                        print('a: ',0)
                         return d.get(a)[0]
             
                 print('len(subroot):',len(subroot))
                 print('subroot[::-1].index(branchValue):', subroot.index(branchValue))
                 position = len(subroot) - subroot.index(branchValue)
                 print('position:',position)
-                print('tree:',tree.tree[::-1][position])
-                self.predictTree(X, tree, position=position, root= subroot[0] + '-' + X[subroot[0]])
+                print('tree.tree:',tree.tree[::-1][position])
+                return self.predictTree(X, tree, position=position, root= subroot[0] + '-' + X[subroot[0]])
                 
-        
-        return 1
+                
+        else:
+            print('return:',tree.leaf_nodes[0].get(None))
+            return tree.leaf_nodes[0].get(None)
                 
         
         
@@ -553,6 +562,7 @@ class RandomForest:
             index = self.bootStrap(X)
             
             #forming a decision tree for each sample
+            print('Data:', X.iloc[index], Y.iloc[index])
             tree.run(X.iloc[index], Y.iloc[index], attributes)
             
             #appending the tree to forest array
