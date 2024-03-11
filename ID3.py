@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Feb 18 12:11:08 2024
+
+@author: shahriar
+"""
+
 import numpy as np 
 import pandas as pd
 import matplotlib.pyplot as plt 
@@ -478,30 +486,38 @@ class ID3:
         Returns 
             predicted value of decision tree formed by ID3 - single row
         """
-        if root == None:
-            subroot = list(tree.tree[::-1][0])
-            branchValue = subroot[0] + '->' + X[subroot[0]]
-            print('branchValue:',branchValue)
-        else:
-            print('tree.tree:',tree.tree[::-1][position])
-            subroot = tree.tree[::-1][position]
-            branchValue = root + '<-' + tree.tree[::-1][position][0] + '->' + X[tree.tree[::-1][position][0]]
-        
-        if branchValue in subroot:
-            a = subroot[0] + '-' + X[subroot[0]]
-            print('a:',a)
-            for d in tree.leaf_nodes:
-                if a in d.keys():
-                    print('a:',d.get(a)[0])
-                    return d.get(a)[0]
-            
+        if tree.tree:
+            if root == None:
+                subroot = list(tree.tree[::-1][0])
+                branchValue = subroot[0] + '->' + X[subroot[0]]
+                print('branchValue:',branchValue)
             else:
+                print('tree.tree:',tree.tree[::-1][position])
+                subroot = tree.tree[::-1][position]
+                branchValue = root + '<-' + tree.tree[::-1][position][0] + '->' + X[tree.tree[::-1][position][0]]
+        
+            if branchValue in subroot:
+                a = subroot[0] + '-' + X[subroot[0]]
+                print('a:',a)
+                for d in tree.leaf_nodes:
+                    if a in d.keys():
+                        print('a:',d.get(a)[0])
+                        #return d.get(a)[0]
+                        if d.get(a)[0] == 'Y':
+                            print('a')
+                            return 1
+                        else:
+                            return 0
+            
                 print('len(subroot):',len(subroot))
                 print('subroot[::-1].index(branchValue):', subroot.index(branchValue))
                 position = len(subroot) - subroot.index(branchValue)
                 print('position:',position)
                 print('tree:',tree.tree[::-1][position])
                 self.predictTree(X, tree, position=position, root= subroot[0] + '-' + X[subroot[0]])
+                
+        
+        return 1
                 
         
         
@@ -534,7 +550,7 @@ class RandomForest:
             X, Y, attributes, ntree
         """
         
-        for _ in ntree:
+        for _ in range(ntree):
             
             tree = ID3()
             
@@ -542,7 +558,7 @@ class RandomForest:
             index = self.bootStrap(X)
             
             #forming a decision tree for each sample
-            tree.run(X[index], Y[index], attributes)
+            tree.run(X.iloc[index], Y.iloc[index], attributes)
             
             #appending the tree to forest array
             self.Forest.append(tree)
@@ -560,7 +576,7 @@ class RandomForest:
         """
         
         #Choosing random data
-        ind = np.random.choice(X.shape[0], size= X.shape[0], replace= True)
+        ind = np.random.choice(X.shape[0], size= X.shape[0], replace= False)
         
         return ind
     
@@ -578,6 +594,7 @@ class RandomForest:
         #Getting prections of given data from each tree and swapping the axes to get group the 
         #preictions from same row in to one array.
         tree_pred = np.swapaxes(np.array([tree.predict(X, tree) for tree in self.Forest]), 0, 1)
+        print('tree_pred:',tree_pred)
         
         #Getting maximum vote for a predicted value
         forest_predictions = np.array([np.bincount(pred).argmax() for pred in tree_pred])
@@ -602,7 +619,7 @@ y = df.iloc[:, -1]
 
 #print('traindf', train_df)
 
-tree = ID3()
-tree.run(X, y, attributes)
-predictions = tree.predict(X, tree)
+tree = RandomForest()
+tree.rfTrees(X, y, attributes,3)
+predictions = tree.predict(X)
 print('predictions:',predictions)
