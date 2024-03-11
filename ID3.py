@@ -502,12 +502,7 @@ class ID3:
                 for d in tree.leaf_nodes:
                     if a in d.keys():
                         print('a:',d.get(a)[0])
-                        #return d.get(a)[0]
-                        if d.get(a)[0] == 'Y':
-                            print('a')
-                            return 1
-                        else:
-                            return 0
+                        return d.get(a)[0]
             
                 print('len(subroot):',len(subroot))
                 print('subroot[::-1].index(branchValue):', subroot.index(branchValue))
@@ -597,7 +592,8 @@ class RandomForest:
         print('tree_pred:',tree_pred)
         
         #Getting maximum vote for a predicted value
-        forest_predictions = np.array([np.bincount(pred).argmax() for pred in tree_pred])
+        #forest_predictions = np.array([np.bincount(pred).argmax() for pred in tree_pred])
+        forest_predictions = np.array([np.unique(pred, return_counts=True)[0][np.argmax(np.unique(pred, return_counts=True)[1])] for pred in tree_pred])
         
         return forest_predictions 
         
