@@ -397,7 +397,7 @@ class ID3:
             
             print('type of most_frequent_value : ', type(most_frequent_value) ) 
             
-            self.leaf_nodes.append( {prev_node: list(most_frequent_value)[0] })
+            self.leaf_nodes.append( {prev_node: most_frequent_value})
             #labels.append(most_frequent_value)
             
             #sys.exit(0)
@@ -671,7 +671,7 @@ class ID3:
                                 
                 
                 
-                self.run(examples_vi, target_attribute_ ,attributes_,  str(A + "-" + vi ) ) # remove not in list error 
+                self.run(examples_vi, target_attribute_ ,attributes_,  str(A) + "-" + str(vi)  ) # remove not in list error 
                 #sys.exit(0)
                 
                 print()
@@ -860,6 +860,7 @@ class RandomForest:
     
     def __init__(self) -> None:
         self.Forest = []
+        self.tree = ID3(do_chi_test=True)
     
     def rfTrees(self, X, Y, attributes, ntree):
         
@@ -886,17 +887,15 @@ class RandomForest:
         
         for _ in range(ntree):
             
-            tree = ID3(do_chi_test=True)
-            
             #Bootstraping the data
             index = self.bootStrap(X)
             
             #forming a decision tree for each sample
             print('Data:', X.iloc[index], Y.iloc[index])
-            tree.run(X.iloc[index], Y.iloc[index], attributes)
+            self.tree.run(X.iloc[index], Y.iloc[index], attributes)
             
             #appending the tree to forest array
-            self.Forest.append(tree)
+            self.Forest.append(self.tree)
       
     def bootStrap(self, X):
         
@@ -929,6 +928,7 @@ class RandomForest:
         #Getting prections of given data from each tree and swapping the axes to get group the 
         #preictions from same row in to one array.
         #tree_pred = np.swapaxes(np.array([tree.predict(X) for tree in self.Forest]), 0, 1)
+        print('self.Forest: ',self.Forest)
         tree_pred = np.array([tree.predict(X) for tree in self.Forest])
         #print('tree_pred:',tree_pred)
         
