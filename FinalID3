@@ -21,6 +21,10 @@ import sys
 from fractions import Fraction
 from decimal import Decimal
 
+from google.colab import drive
+drive.mount('/content/drive')
+
+
 
 from scipy.stats import chi2_contingency
 
@@ -437,7 +441,7 @@ class ID3:
             
             info_gain = self.information_gain_for_discrete_attribute(examples[a], 
                                                                      target_attribute, 
-                                                                     impurity='entropy')        
+                                                                     impurity = 'entropy')        
             
             if info_gain > highest_info_gain: 
                 A = a
@@ -860,6 +864,8 @@ class RandomForest:
     
     def __init__(self) -> None:
         self.Forest = []
+        self.treest = []
+        self.leaves = []
     
     def rfTrees(self, X, Y, attributes, ntree):
         
@@ -895,6 +901,9 @@ class RandomForest:
             print('Data:', X.iloc[index], Y.iloc[index])
             tree.run(X.iloc[index], Y.iloc[index], attributes)
             
+            self.treest.append(tree.tree)
+            self.leaves.append(tree.leaf_nodes)
+
             #appending the tree to forest array
             self.Forest.append(tree)
       
@@ -925,12 +934,19 @@ class RandomForest:
         Returns 
             An array of predicted values(maximum voted predictions) from random forest for a data
         """
-        
+        t = pd.DataFrame(self.treest)
+        l = pd.DataFrame(self.leaves)
+        t.index = ['tree1','tree2','tree3']
+        l.index = ['tree1','tree2','tree3']
+        t.to_csv('/content/drive/My Drive/treeStruct.csv', header=False, lineterminator='\n\n')
+        l.to_csv('/content/drive/My Drive/leafNodes.csv', header=False, lineterminator='\n\n')
+
         #Getting prections of given data from each tree and swapping the axes to get group the 
         #preictions from same row in to one array.
         #tree_pred = np.swapaxes(np.array([tree.predict(X) for tree in self.Forest]), 0, 1)
-        print('self.Forest: ',self.Forest)
-        tree_pred = np.array([tree.predict(X) for tree in self.Forest])
+
+        #print('self.Forest: ',self.Forest)
+        tree_pred = pd.DataFrame(np.array([tree.predict(X) for tree in self.Forest]))
         #print('tree_pred:',tree_pred)
         
         #Getting maximum vote for a predicted value
@@ -939,10 +955,10 @@ class RandomForest:
         #forest_predictions = np.array([np.unique(pred, return_counts=True)[0][np.argmax(np.unique(pred, return_counts=True)[1])] for pred in tree_pred])
         
         #return forest_predictions
-        return tree_pred
+        tree_pred.to_csv('/content/drive/My Drive/predictionOut.csv',index=False, header=False)
     
     
-df = pd.read_csv('/Users/rahulpayeli/Documents/ML/train_discretized.csv')
+df = pd.read_csv('/content/drive/My Drive/train_discretized.csv')
 df.drop(columns='TransactionID' , inplace=True)
 attributes = df.columns.tolist()
 attributes.remove('isFraud')
@@ -959,4 +975,3 @@ y = df.iloc[:, -1]
 tree = RandomForest()
 tree.rfTrees(X, y, attributes,3)
 predictions = tree.predict(X)
-print('predictions:',predictions)
