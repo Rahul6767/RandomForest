@@ -860,7 +860,6 @@ class RandomForest:
     
     def __init__(self) -> None:
         self.Forest = []
-        self.tree = ID3(do_chi_test=True)
     
     def rfTrees(self, X, Y, attributes, ntree):
         
@@ -887,15 +886,17 @@ class RandomForest:
         
         for _ in range(ntree):
             
+            tree = ID3(do_chi_test=True)
+            
             #Bootstraping the data
             index = self.bootStrap(X)
             
             #forming a decision tree for each sample
             print('Data:', X.iloc[index], Y.iloc[index])
-            self.tree.run(X.iloc[index], Y.iloc[index], attributes)
+            tree.run(X.iloc[index], Y.iloc[index], attributes)
             
             #appending the tree to forest array
-            self.Forest.append(self.tree)
+            self.Forest.append(tree)
       
     def bootStrap(self, X):
         
