@@ -1,0 +1,2 @@
+ Entropy_train time :  513.8245458602905
+Entropy_test time :  502.13697481155396}
