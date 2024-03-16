@@ -1,0 +1,2 @@
+MaxVal train time:  189.6570906639099
+MaxVal test time:  491.4104919433594
