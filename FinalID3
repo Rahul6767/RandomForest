@@ -892,7 +892,7 @@ class RandomForest:
 
         for _ in range(ntree):
 
-            tree = ID3(do_chi_test=False)
+            tree = ID3(do_chi_test=True)
 
             #print('My Attr:',self.attributes)
 
@@ -984,6 +984,6 @@ y = df.iloc[:, -1]
 tree = RandomForest()
 tree.rfTrees(X, y, 3) 
 output = pd.DataFrame()
-output['TransactionID'] = df.get('TransactionID')
+output['TransactionID'] = dftest.get('TransactionID')
 output['isFraud'] = tree.predict(dftest.iloc[:, 1:])
 output.to_csv('/content/drive/My Drive/output.csv', index = False)
