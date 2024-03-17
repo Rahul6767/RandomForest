@@ -864,8 +864,8 @@ class RandomForest:
 
     def __init__(self) -> None:
         self.Forest = []
-        self.treest = []
-        self.leaves = []
+        #self.treest = []
+        #self.leaves = []
 
     def rfTrees(self, X, Y, ntree):
 
@@ -906,8 +906,8 @@ class RandomForest:
 
             #l = pd.DataFrame(self.leaves)
 
-            self.treest.append(tree.tree)
-            self.leaves.append(tree.leaf_nodes)
+            #self.treest.append(tree.tree)
+            #self.leaves.append(tree.leaf_nodes)
 
             #appending the tree to forest array
             self.Forest.append(tree)
@@ -939,12 +939,12 @@ class RandomForest:
         Returns
             An array of predicted values(maximum voted predictions) from random forest for a data
         """
-        t = pd.DataFrame(self.treest)
-        l = pd.DataFrame(self.leaves)
-        t.index = ['tree1','tree2','tree3']
-        l.index = ['tree1','tree2','tree3']
-        t.to_csv('/content/drive/My Drive/treeStruct.csv', header=False, lineterminator='\n\n')
-        l.to_csv('/content/drive/My Drive/leafNodes.csv', header=False, lineterminator='\n\n')
+        #t = pd.DataFrame(self.treest)
+        #l = pd.DataFrame(self.leaves)
+        #t.index = ['tree1','tree2','tree3']
+        #l.index = ['tree1','tree2','tree3']
+        #t.to_csv('/content/drive/My Drive/treeStruct.csv', header=False, lineterminator='\n\n')
+        #l.to_csv('/content/drive/My Drive/leafNodes.csv', header=False, lineterminator='\n\n')
 
         #Getting prections of given data from each tree and swapping the axes to get group the
         #preictions from same row in to one array.
